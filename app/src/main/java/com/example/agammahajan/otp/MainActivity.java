@@ -7,9 +7,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,30 +27,47 @@ public class MainActivity extends AppCompatActivity {
         final TextView textView = (TextView) findViewById(R.id.textView);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Calendar c = Calendar.getInstance();
-                int h = c.get(Calendar.HOUR_OF_DAY);
-                int m = c.get(Calendar.MINUTE);
-                System.out.println(h);
-                System.out.println(m);
 
 
-                DateFormat hf = new SimpleDateFormat("HHmm");
-                String hr = hf.format(Calendar.getInstance().getTime());
+                DateFormat d = new SimpleDateFormat("yyMMddHHmm");
+                String da = d.format(Calendar.getInstance().getTime());
 
-                DateFormat mf = new SimpleDateFormat("mm");
-                String min = mf.format(Calendar.getInstance().getTime());
+                int tt = Integer.parseInt(da);
 
 
-//                System.out.println(hr);
-//                System.out.println(min);
+                String test= Integer.toHexString(tt);
 
-                int minute = Integer.parseInt(min);
-                int last_digit=Math.abs(minute % 10);
+                String temp="";
+                String mykey = "secret";
 
-//                System.out.println(last_digit);
-                String str = Integer.toString(last_digit)+hr;
-//                System.out.println(str);
-                textView.setText(str);
+                int c=5;
+                try {
+                    Mac mac = Mac.getInstance("HmacSHA1");
+                    SecretKeySpec secret = new SecretKeySpec(mykey.getBytes(),"HmacSHA1");
+                    mac.init(secret);
+                    byte[] digest = mac.doFinal(test.getBytes());
+                    String enc = new String(digest);
+
+                    for (byte b : digest) {
+                        if(c>=0){
+                            temp=temp+String.format("%02x", b);
+                            c--;
+                        }
+                        else break;
+
+                    }
+
+                    long result=Long.parseLong(temp,16);
+                    result=result%100000;
+
+                    textView.setText(Long.toString(result));
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+
+
+
+
             }
         });
 

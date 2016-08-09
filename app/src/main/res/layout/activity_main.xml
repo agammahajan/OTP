@@ -30,6 +30,6 @@
         android:singleLine="true"
         android:textSize="@dimen/abc_action_bar_content_inset_material"
         android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/button"
-        android:layout_alignStart="@+id/button" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
